@@ -175,11 +175,24 @@ export async function createUiohookRecorderAdapter(
     const key = vcToKey[e.keycode] ?? rawKey ?? fallback;
     if (!key) return;
     const mask = Number(e.mask ?? 0);
+    const hasOption = Boolean(mask & MASK_ALT);
     const modifiers: Array<"shift" | "control" | "alt" | "command"> = [];
     if (mask & MASK_SHIFT) modifiers.push("shift");
     if (mask & MASK_CTRL) modifiers.push("control");
     if (mask & MASK_ALT) modifiers.push("alt");
     if (mask & MASK_META) modifiers.push("command");
+    const scrollOnOption: Record<string, number> = {
+      down: 150,
+      up: -150,
+      pageup: -400,
+      pagedown: 400,
+      home: -600,
+      end: 600
+    };
+    if (hasOption && key in scrollOnOption) {
+      push({ type: "scroll", dx: 0, dy: scrollOnOption[key] } as any, ts);
+      return;
+    }
     push({ type: "key_tap", key, modifiers: modifiers.length ? modifiers : undefined } as any, ts);
   };
 
