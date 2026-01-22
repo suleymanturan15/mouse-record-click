@@ -37,6 +37,8 @@ export type RendererApi = {
   };
   recorder: {
     start: (args: { macroId?: string }) => Promise<void>;
+    pause: () => Promise<void>;
+    resume: () => Promise<void>;
     stop: () => Promise<Macro>;
   };
   player: {

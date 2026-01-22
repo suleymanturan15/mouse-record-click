@@ -44,7 +44,7 @@ export function DashboardScreen() {
   }, []);
 
   // Keyboard shortcuts (app-focused):
-  // Ctrl+R = Record, Ctrl+D = Pause/Resume, Ctrl+S = Stop
+  // Ctrl+R = Record, Ctrl+P = Pause/Resume (recording), Ctrl+S = Stop
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (!e.ctrlKey) return;
@@ -54,13 +54,13 @@ export function DashboardScreen() {
         if (status?.mode === "IDLE" && selectedMacroId) {
           run(() => window.mouseScheduler.recorder.start({ macroId: selectedMacroId }));
         }
-      } else if (key === "d") {
+      } else if (key === "p") {
         e.preventDefault();
-        if (status?.mode === "PLAYING") run(() => window.mouseScheduler.player.pause());
-        else if (status?.mode === "PAUSED") run(() => window.mouseScheduler.player.resume());
+        if (status?.mode === "RECORDING") run(() => window.mouseScheduler.recorder.pause());
+        else if (status?.mode === "RECORDING_PAUSED") run(() => window.mouseScheduler.recorder.resume());
       } else if (key === "s") {
         e.preventDefault();
-        if (status?.mode === "RECORDING") stopRecording();
+        if (status?.mode === "RECORDING" || status?.mode === "RECORDING_PAUSED") stopRecording();
         else run(() => window.mouseScheduler.player.stop());
       }
     };
@@ -139,7 +139,7 @@ export function DashboardScreen() {
               her zaman aktif.
             </small>
             <small>
-              Kısayollar: <b>Ctrl+R</b> Record, <b>Ctrl+D</b> Pause/Resume, <b>Ctrl+S</b> Stop
+              Kısayollar: <b>Ctrl+R</b> Record, <b>Ctrl+P</b> Pause/Resume (record), <b>Ctrl+S</b> Stop
             </small>
           </div>
           <div className="spacer" />

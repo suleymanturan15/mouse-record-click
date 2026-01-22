@@ -11,6 +11,12 @@ function missingRecorderAdapter(errMsg: string): RecorderAdapter {
     async start() {
       throw new Error(errMsg);
     },
+    async pause() {
+      throw new Error(errMsg);
+    },
+    async resume() {
+      throw new Error(errMsg);
+    },
     async stop() {
       throw new Error(errMsg);
     }

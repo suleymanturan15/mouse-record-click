@@ -72,6 +72,19 @@ export function registerGlobalShortcuts(services: AppServices) {
 
   const togglePause = async () => {
     try {
+      const rec = services.recorder.getStatus();
+      if (rec.mode === "RECORDING") {
+        bringToFront();
+        await services.recorder.pause();
+        return;
+      }
+      if (rec.mode === "RECORDING_PAUSED") {
+        bringToFront();
+        await services.recorder.resume();
+        minimizeToBackground();
+        return;
+      }
+
       const st = services.player.getStatus();
       if (st.mode === "PLAYING") {
         bringToFront();

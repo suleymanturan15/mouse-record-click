@@ -88,7 +88,21 @@ export function registerGlobalShortcuts(services: AppServices) {
 
   const togglePause = async () => {
     try {
-      // Use player internal status (more reliable than shared StatusStore which may be overwritten)
+      // Priority: pause/resume RECORDING (user expectation for Ctrl+P)
+      const rec = services.recorder.getStatus();
+      if (rec.mode === "RECORDING") {
+        bringToFront();
+        await services.recorder.pause();
+        return;
+      }
+      if (rec.mode === "RECORDING_PAUSED") {
+        bringToFront();
+        await services.recorder.resume();
+        minimizeToBackground();
+        return;
+      }
+
+      // Otherwise: pause/resume PLAYBACK
       const st = services.player.getStatus();
       if (st.mode === "PLAYING") {
         bringToFront();
@@ -96,7 +110,6 @@ export function registerGlobalShortcuts(services: AppServices) {
       } else if (st.mode === "PAUSED") {
         bringToFront();
         await services.player.resume();
-        // user requested: when resuming, go back to background
         minimizeToBackground();
       }
     } catch {

@@ -7,6 +7,8 @@ export type RecorderOptions = {
 export interface RecorderAdapter {
   ensureReady(): Promise<void>;
   start(): Promise<void>;
+  pause(): Promise<void>;
+  resume(): Promise<void>;
   stop(): Promise<MacroEvent[]>;
 }
 
@@ -27,6 +29,7 @@ export async function createUiohookRecorderAdapter(
   let events: MacroEvent[] = [];
   let lastTs = 0;
   let lastMoveTs = 0;
+  let paused = false;
 
   // uiohook modifier masks (from libuiohook/include/uiohook.h)
   const MASK_SHIFT = (1 << 0) | (1 << 4);
@@ -82,6 +85,7 @@ export async function createUiohookRecorderAdapter(
   };
 
   const push = (ev: Omit<MacroEvent, "deltaMs"> & Partial<Pick<any, "deltaMs">>, ts: number) => {
+    if (paused) return;
     const deltaMs = lastTs ? Math.max(0, ts - lastTs) : 0;
     lastTs = ts;
     if ((ev as any).type === "wait") {
@@ -174,6 +178,7 @@ export async function createUiohookRecorderAdapter(
       events = [];
       lastTs = 0;
       lastMoveTs = 0;
+      paused = false;
       uiohook.on("mousemove", onMove);
       uiohook.on("mousedown", onMouseDown);
       uiohook.on("mouseup", onMouseUp);
@@ -188,9 +193,20 @@ export async function createUiohookRecorderAdapter(
       uiohook.on("keydown", onKeyDown);
       uiohook.start();
     },
+    async pause() {
+      if (!started) return;
+      paused = true;
+    },
+    async resume() {
+      if (!started) return;
+      // Don't count paused time into the next deltaMs
+      lastTs = 0;
+      paused = false;
+    },
     async stop() {
       if (!started) throw new Error("Recorder not started");
       started = false;
+      paused = false;
       uiohook.off("mousemove", onMove);
       uiohook.off("mousedown", onMouseDown);
       uiohook.off("mouseup", onMouseUp);

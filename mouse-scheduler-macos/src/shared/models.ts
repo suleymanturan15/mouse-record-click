@@ -79,7 +79,7 @@ export type Schedule = {
   updatedAt: IsoDateString;
 };
 
-export type RunnerMode = "IDLE" | "RECORDING" | "PLAYING" | "PAUSED";
+export type RunnerMode = "IDLE" | "RECORDING" | "RECORDING_PAUSED" | "PLAYING" | "PAUSED";
 
 export type AppStatus = {
   mode: RunnerMode;

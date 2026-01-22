@@ -109,6 +109,14 @@ export function registerIpcHandlers(services: AppServices) {
         });
         return m;
       }
+      case "recorder.pause":
+        requireAccessibility();
+        await services.recorder.pause();
+        return;
+      case "recorder.resume":
+        requireAccessibility();
+        await services.recorder.resume();
+        return;
 
       // Player
       case "player.play": {

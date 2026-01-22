@@ -43,6 +43,8 @@ const api: RendererApi = {
   },
   recorder: {
     start: (args: Parameters<RendererApi["recorder"]["start"]>[0]) => invoke("recorder.start", args),
+    pause: () => invoke("recorder.pause"),
+    resume: () => invoke("recorder.resume"),
     stop: () => invoke("recorder.stop")
   },
   player: {
