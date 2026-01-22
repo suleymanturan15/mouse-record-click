@@ -79,14 +79,14 @@ export async function createUiohookRecorderAdapter(
     0x002d: "x",
     0x0015: "y",
     0x002c: "z",
-    0x0048: "up",
-    0x0050: "down",
-    0x004b: "left",
-    0x004d: "right",
-    0x0066: "pageup",
-    0x0072: "pagedown",
-    0x006a: "home",
-    0x006c: "end"
+    0x0E47: "home",
+    0x0E4F: "end",
+    0x0E49: "pageup",
+    0x0E51: "pagedown",
+    0xE048: "up",
+    0xE050: "down",
+    0xE04B: "left",
+    0xE04D: "right"
   };
 
   const push = (ev: Omit<MacroEvent, "deltaMs"> & Partial<Pick<any, "deltaMs">>, ts: number) => {
