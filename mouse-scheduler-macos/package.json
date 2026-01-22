@@ -1,7 +1,7 @@
 {
   "name": "mouse-scheduler-macos",
   "private": true,
-  "version": "0.1.23",
+  "version": "0.1.24",
   "description": "Mouse Recorder & Scheduler (macOS)",
   "main": "dist/main/main/main.js",
   "scripts": {

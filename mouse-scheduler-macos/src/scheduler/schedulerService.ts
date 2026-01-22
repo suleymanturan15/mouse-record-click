@@ -240,7 +240,8 @@ export class SchedulerService {
       if (job) jobs.push(job);
     } else if (s.interval && mode === "INTERVAL") {
       // Interval schedule: run between [start,end] every N minutes.
-      // We schedule a minute-tick job and filter inside. This keeps the logic simple and supports any everyMin.
+      // Use a frequent JS timer instead of node-schedule cron, because on some systems cron ticks can be missed
+      // when the app is backgrounded or throttled.
       const { start, end, everyMin } = s.interval;
       const startT = parseTime(start);
       const endT = parseTime(end);
@@ -249,12 +250,7 @@ export class SchedulerService {
       const step = Math.max(1, Math.min(1440, Math.floor(everyMin)));
       const overnight = endMin < startMin;
 
-      const rule = new schedule.RecurrenceRule();
-      // fire every minute, all days; we decide allowed days in handler to support overnight windows.
-      rule.minute = new schedule.Range(0, 59, 1);
-      rule.hour = new schedule.Range(0, 23, 1);
-
-      const job = schedule.scheduleJob(rule, async () => {
+      const tick = async () => {
         try {
           const now = new Date();
           const curMin = now.getHours() * 60 + now.getMinutes();
@@ -309,8 +305,12 @@ export class SchedulerService {
             this.intervalState.set(s.scheduleId, st);
           }
         }
-      });
-      if (job) jobs.push(job);
+      };
+
+      const t = setInterval(() => void tick(), 10_000);
+      // fire quickly after creating schedule so user doesn't have to wait a full minute tick
+      setTimeout(() => void tick(), 500);
+      jobs.push({ cancel: () => clearInterval(t) } as any);
     } else {
       // Times schedule (legacy)
       for (const d of s.days) {

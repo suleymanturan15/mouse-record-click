@@ -247,11 +247,7 @@ export class SchedulerService {
       const step = Math.max(1, Math.min(1440, Math.floor(everyMin)));
       const overnight = endMin < startMin;
 
-      const rule = new schedule.RecurrenceRule();
-      rule.minute = new schedule.Range(0, 59, 1);
-      rule.hour = new schedule.Range(0, 23, 1);
-
-      const job = schedule.scheduleJob(rule, async () => {
+      const tick = async () => {
         try {
           const now = new Date();
           const curMin = now.getHours() * 60 + now.getMinutes();
@@ -302,8 +298,11 @@ export class SchedulerService {
             this.intervalState.set(s.scheduleId, st);
           }
         }
-      });
-      if (job) jobs.push(job);
+      };
+
+      const t = setInterval(() => void tick(), 10_000);
+      setTimeout(() => void tick(), 500);
+      jobs.push({ cancel: () => clearInterval(t) } as any);
     } else {
       for (const d of s.days) {
         const dayOfWeek = dayCodeToNodeScheduleDay(d);
