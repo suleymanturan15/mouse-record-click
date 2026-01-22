@@ -2,6 +2,7 @@ import { app, ipcMain } from "electron";
 import { IPC_CHANNEL } from "../shared/ipc";
 import type { MacroEvent, Schedule } from "../shared/models";
 import { AppServices } from "./services/AppServices";
+import { updateSchedulerPowerBlocker } from "./services/SchedulerPowerService";
 
 export function registerIpcHandlers(services: AppServices) {
   ipcMain.handle(IPC_CHANNEL, async (_evt, payload: { method: string; args?: any }) => {
@@ -73,19 +74,23 @@ export function registerIpcHandlers(services: AppServices) {
       case "schedules.create": {
         const created = await services.storage.createSchedule(args as any);
         await services.scheduler.reload().catch(() => {});
+        await updateSchedulerPowerBlocker(services.storage);
         return created;
       }
       case "schedules.update":
         await services.storage.patchSchedule(String(args.scheduleId), args.patch as Partial<Schedule>);
         await services.scheduler.reload().catch(() => {});
+        await updateSchedulerPowerBlocker(services.storage);
         return;
       case "schedules.remove":
         await services.storage.removeSchedule(String(args.scheduleId));
         await services.scheduler.reload().catch(() => {});
+        await updateSchedulerPowerBlocker(services.storage);
         return;
 
       case "scheduler.reload":
         await services.scheduler.reload();
+        await updateSchedulerPowerBlocker(services.storage);
         return;
 
       // Recorder

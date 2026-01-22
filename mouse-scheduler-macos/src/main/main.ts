@@ -4,6 +4,7 @@ import * as fs from "node:fs";
 import { registerIpcHandlers } from "./registerIpcHandlers";
 import { AppServices } from "./services/AppServices";
 import { registerGlobalShortcuts, unregisterGlobalShortcuts } from "./registerGlobalShortcuts";
+import { stopSchedulerPowerBlocker, updateSchedulerPowerBlocker } from "./services/SchedulerPowerService";
 
 function resolvePreloadPath() {
   const candidates = [
@@ -47,6 +48,8 @@ function createWindow() {
 app.whenReady().then(async () => {
   const services = await AppServices.create();
   registerIpcHandlers(services);
+  // Prevent macOS App Nap / background throttling from breaking scheduled jobs.
+  await updateSchedulerPowerBlocker(services.storage);
 
   createWindow();
   registerGlobalShortcuts(services);
@@ -58,6 +61,7 @@ app.whenReady().then(async () => {
 
 app.on("will-quit", () => {
   unregisterGlobalShortcuts();
+  stopSchedulerPowerBlocker();
 });
 
 app.on("window-all-closed", () => {
