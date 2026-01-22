@@ -88,6 +88,16 @@ export async function createUiohookRecorderAdapter(
     0xE04B: "left",
     0xE04D: "right"
   };
+  const rawToKey: Record<number, string> = {
+    0x7e: "up",
+    0x7d: "down",
+    0x7b: "left",
+    0x7c: "right",
+    0x74: "home",
+    0x77: "end",
+    0x75: "pageup",
+    0x79: "pagedown"
+  };
 
   const push = (ev: Omit<MacroEvent, "deltaMs"> & Partial<Pick<any, "deltaMs">>, ts: number) => {
     if (paused) return;
@@ -160,7 +170,9 @@ export async function createUiohookRecorderAdapter(
 
   const onKeyDown = (e: any) => {
     const ts = Date.now();
-    const key = vcToKey[e.keycode];
+    const rawKey = typeof e.rawcode === "number" ? rawToKey[e.rawcode] : undefined;
+    const fallback = typeof e.key === "string" ? e.key.toLowerCase() : undefined;
+    const key = vcToKey[e.keycode] ?? rawKey ?? fallback;
     if (!key) return;
     const mask = Number(e.mask ?? 0);
     const modifiers: Array<"shift" | "control" | "alt" | "command"> = [];
