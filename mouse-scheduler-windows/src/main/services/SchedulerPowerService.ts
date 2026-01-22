@@ -9,7 +9,7 @@ export async function updateSchedulerPowerBlocker(storage: Storage) {
     const hasEnabled = schedules.some((s) => s.enabled);
     if (hasEnabled) {
       if (blockerId == null || !powerSaveBlocker.isStarted(blockerId)) {
-        blockerId = powerSaveBlocker.start("prevent-app-suspension");
+        blockerId = powerSaveBlocker.start("prevent-display-sleep");
       }
     } else {
       if (blockerId != null && powerSaveBlocker.isStarted(blockerId)) {
