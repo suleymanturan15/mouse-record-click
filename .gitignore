@@ -1,0 +1,25 @@
+.DS_Store
+
+# Node / JS
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Builds
+dist/
+release/
+out/
+.vite/
+
+# Electron
+*.blockmap
+
+# TypeScript
+*.tsbuildinfo
+
+# Env
+.env
+.env.*
+
