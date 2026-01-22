@@ -88,7 +88,8 @@ export function registerGlobalShortcuts(services: AppServices) {
 
   const togglePause = async () => {
     try {
-      const st = services.status.get();
+      // Use player internal status (more reliable than shared StatusStore which may be overwritten)
+      const st = services.player.getStatus();
       if (st.mode === "PLAYING") {
         bringToFront();
         await services.player.pause();
@@ -113,6 +114,8 @@ export function registerGlobalShortcuts(services: AppServices) {
   if (process.platform === "darwin") {
     globalShortcut.register("Control+R", () => void startRecord());
     globalShortcut.register("Control+P", () => void togglePause());
+    // Some keyboards/layouts report this modifier name as Ctrl
+    globalShortcut.register("Ctrl+P", () => void togglePause());
     globalShortcut.register("Control+S", () => void stopRecord());
   } else {
     // On Windows/Linux Ctrl is already covered by CommandOrControl.

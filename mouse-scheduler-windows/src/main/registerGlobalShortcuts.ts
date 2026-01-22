@@ -72,7 +72,7 @@ export function registerGlobalShortcuts(services: AppServices) {
 
   const togglePause = async () => {
     try {
-      const st = services.status.get();
+      const st = services.player.getStatus();
       if (st.mode === "PLAYING") {
         bringToFront();
         await services.player.pause();

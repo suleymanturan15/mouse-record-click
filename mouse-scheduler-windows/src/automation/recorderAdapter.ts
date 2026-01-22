@@ -115,7 +115,35 @@ export async function createUiohookRecorderAdapter(
 
   const onWheel = (e: any) => {
     const ts = Date.now();
-    push({ type: "scroll", dx: e.amountX ?? 0, dy: e.amountY ?? e.amount ?? 0 } as any, ts);
+    const n = (v: any) => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
+    let dx =
+      n(e.amountX) ??
+      n(e.deltaX) ??
+      n(e.wheelDeltaX) ??
+      n(e.scrollX) ??
+      0;
+    let dy =
+      n(e.amountY) ??
+      n(e.deltaY) ??
+      n(e.wheelDeltaY) ??
+      n(e.rotation) ??
+      n(e.amount) ??
+      n(e.scrollAmount) ??
+      n(e.scrollY) ??
+      0;
+
+    const scale = (v: number) => {
+      const abs = Math.abs(v);
+      if (abs > 0 && abs < 1) return v * 10;
+      return v;
+    };
+    dx = scale(dx);
+    dy = scale(dy);
+
+    const ix = Math.trunc(dx);
+    const iy = Math.trunc(dy);
+    if (ix === 0 && iy === 0) return;
+    push({ type: "scroll", dx: ix, dy: iy } as any, ts);
   };
 
   const onKeyDown = (e: any) => {
@@ -146,6 +174,11 @@ export async function createUiohookRecorderAdapter(
       uiohook.on("mouseup", onMouseUp);
       uiohook.on("mouseclick", onClick);
       uiohook.on("mousewheel", onWheel);
+      try {
+        uiohook.on("wheel", onWheel);
+      } catch {
+        // ignore
+      }
       uiohook.on("keydown", onKeyDown);
       uiohook.start();
     },
@@ -157,6 +190,11 @@ export async function createUiohookRecorderAdapter(
       uiohook.off("mouseup", onMouseUp);
       uiohook.off("mouseclick", onClick);
       uiohook.off("mousewheel", onWheel);
+      try {
+        uiohook.off("wheel", onWheel);
+      } catch {
+        // ignore
+      }
       uiohook.off("keydown", onKeyDown);
       uiohook.stop();
       return events;

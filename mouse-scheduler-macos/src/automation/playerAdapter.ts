@@ -36,6 +36,10 @@ export async function createRobotJsPlayerAdapter(): Promise<PlayerAdapter> {
     }
   }
 
+  // Accumulate fractional scroll and only send integer steps to robotjs
+  let scrollAccX = 0;
+  let scrollAccY = 0;
+
   return {
     async ensureReady() {
       // no-op
@@ -53,7 +57,14 @@ export async function createRobotJsPlayerAdapter(): Promise<PlayerAdapter> {
       robot.mouseToggle("up", button);
     },
     async scroll(dx, dy) {
-      robot.scrollMouse(Math.round(dx), Math.round(dy));
+      scrollAccX += Number(dx) || 0;
+      scrollAccY += Number(dy) || 0;
+      const sendX = Math.trunc(scrollAccX);
+      const sendY = Math.trunc(scrollAccY);
+      if (sendX === 0 && sendY === 0) return;
+      robot.scrollMouse(sendX, sendY);
+      scrollAccX -= sendX;
+      scrollAccY -= sendY;
     },
     async keyTap(key, modifiers) {
       if (modifiers && modifiers.length > 0) robot.keyTap(key, modifiers);
