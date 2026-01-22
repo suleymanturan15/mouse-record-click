@@ -709,6 +709,21 @@ export function SchedulerScreen() {
           >
             Create Schedule
           </button>
+          <button
+            onClick={() =>
+              run(() =>
+                window.mouseScheduler.runner.runNow({
+                  macroId,
+                  preRunCountdownSec,
+                  repeatCount,
+                  conflictPolicy
+                })
+              )
+            }
+            disabled={!macroId}
+          >
+            Run Now
+          </button>
           <div className="spacer" />
           <button onClick={() => run(() => window.mouseScheduler.scheduler.reload())}>Reload Jobs</button>
         </div>
@@ -756,6 +771,20 @@ export function SchedulerScreen() {
                 <td>
                   <div className="row">
                     <small>{(s as any).repeatCount ? `×${(s as any).repeatCount}` : ""}</small>
+                    <button
+                      onClick={() =>
+                        run(() =>
+                          window.mouseScheduler.runner.runNow({
+                            macroId: s.macroId,
+                            preRunCountdownSec: s.preRunCountdownSec,
+                            repeatCount: (s as any).repeatCount ?? 1,
+                            conflictPolicy: s.conflictPolicy
+                          })
+                        )
+                      }
+                    >
+                      Run Now
+                    </button>
                     <button
                       onClick={() =>
                         run(() =>

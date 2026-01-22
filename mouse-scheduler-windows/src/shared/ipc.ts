@@ -1,4 +1,4 @@
-import type { Macro, MacroEvent, AppStatus, Schedule } from "./models";
+import type { Macro, MacroEvent, AppStatus, Schedule, ConflictPolicy } from "./models";
 
 export type Result<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -46,6 +46,9 @@ export type RendererApi = {
     pause: () => Promise<void>;
     resume: () => Promise<void>;
     stop: () => Promise<void>;
+  };
+  runner: {
+    runNow: (args: { macroId: string; preRunCountdownSec?: number; repeatCount?: number; conflictPolicy?: ConflictPolicy }) => Promise<void>;
   };
 };
 

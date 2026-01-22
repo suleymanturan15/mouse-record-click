@@ -139,6 +139,20 @@ export function registerIpcHandlers(services: AppServices) {
         await services.player.stop();
         return;
 
+      case "runner.runNow": {
+        requireAccessibility();
+        const macroId = String(args.macroId);
+        const macro = await services.storage.getMacro(macroId);
+        await services.coordinator.trigger({
+          macro,
+          conflictPolicy: args.conflictPolicy ?? "QUEUE",
+          preRunCountdownSec: Number(args.preRunCountdownSec ?? 0),
+          repeatCount: Number(args.repeatCount ?? 1),
+          source: "manual"
+        });
+        return;
+      }
+
       default:
         throw new Error(`Unknown IPC method: ${method}`);
     }

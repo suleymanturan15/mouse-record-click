@@ -52,6 +52,9 @@ const api: RendererApi = {
     pause: () => invoke("player.pause"),
     resume: () => invoke("player.resume"),
     stop: () => invoke("player.stop")
+  },
+  runner: {
+    runNow: (args: Parameters<RendererApi["runner"]["runNow"]>[0]) => invoke("runner.runNow", args)
   }
 };
 
