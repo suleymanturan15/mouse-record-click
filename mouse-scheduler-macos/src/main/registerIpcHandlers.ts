@@ -1,4 +1,4 @@
-import { ipcMain } from "electron";
+import { app, ipcMain } from "electron";
 import { IPC_CHANNEL } from "../shared/ipc";
 import type { MacroEvent, Schedule } from "../shared/models";
 import { AppServices } from "./services/AppServices";
@@ -17,6 +17,10 @@ export function registerIpcHandlers(services: AppServices) {
     };
 
     switch (method) {
+      // App
+      case "app.getVersion":
+        return app.getVersion();
+
       // Status
       case "status.get":
         return services.status.get();

@@ -88,6 +88,7 @@ export function registerGlobalShortcuts(services: AppServices) {
 
   globalShortcut.register("CommandOrControl+R", () => void startRecord());
   globalShortcut.register("CommandOrControl+P", () => void togglePause());
+  globalShortcut.register("CommandOrControl+D", () => void togglePause());
   globalShortcut.register("CommandOrControl+S", () => void stopRecord());
   globalShortcut.register("CommandOrControl+Shift+S", () => void stopAll());
 }

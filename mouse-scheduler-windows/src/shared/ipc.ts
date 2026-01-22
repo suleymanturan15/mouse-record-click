@@ -3,6 +3,9 @@ import type { Macro, MacroEvent, AppStatus, Schedule } from "./models";
 export type Result<T> = { ok: true; value: T } | { ok: false; error: string };
 
 export type RendererApi = {
+  app: {
+    getVersion: () => Promise<string>;
+  };
   status: {
     get: () => Promise<AppStatus>;
   };

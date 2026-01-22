@@ -7,6 +7,9 @@ function invoke(method: string, args?: unknown) {
 }
 
 const api: RendererApi = {
+  app: {
+    getVersion: () => invoke("app.getVersion")
+  },
   status: {
     get: () => invoke("status.get")
   },

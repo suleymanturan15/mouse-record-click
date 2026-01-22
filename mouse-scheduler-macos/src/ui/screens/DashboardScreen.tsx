@@ -6,6 +6,7 @@ export function DashboardScreen() {
     () => window.mouseScheduler.macros.list(),
     []
   );
+  const { data: appVersion } = useAsync(() => window.mouseScheduler.app.getVersion(), []);
   const [selectedMacroId, setSelectedMacroId] = useState<string>("");
   const [status, setStatus] = useState<Awaited<ReturnType<typeof window.mouseScheduler.status.get>> | null>(
     null
@@ -43,7 +44,7 @@ export function DashboardScreen() {
   }, []);
 
   // Keyboard shortcuts (app-focused):
-  // Ctrl+R = Record, Ctrl+P = Pause/Resume, Ctrl+S = Stop
+  // Ctrl+R = Record, Ctrl+D = Pause/Resume, Ctrl+S = Stop
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (!e.ctrlKey) return;
@@ -53,7 +54,7 @@ export function DashboardScreen() {
         if (status?.mode === "IDLE" && selectedMacroId) {
           run(() => window.mouseScheduler.recorder.start({ macroId: selectedMacroId }));
         }
-      } else if (key === "p") {
+      } else if (key === "d") {
         e.preventDefault();
         if (status?.mode === "PLAYING") run(() => window.mouseScheduler.player.pause());
         else if (status?.mode === "PAUSED") run(() => window.mouseScheduler.player.resume());
@@ -95,6 +96,7 @@ export function DashboardScreen() {
     <div style={{ display: "grid", gap: 14 }}>
       <div className="row">
         <h2 style={{ margin: 0 }}>Dashboard</h2>
+        {appVersion ? <small style={{ opacity: 0.7, marginLeft: 10 }}>v{appVersion}</small> : null}
         <div className="spacer" />
         <span className={`pill ${status?.mode === "IDLE" ? "" : "ok"}`}>
           {status?.mode ?? "…"}
@@ -137,7 +139,7 @@ export function DashboardScreen() {
               her zaman aktif.
             </small>
             <small>
-              Kısayollar: <b>Ctrl+R</b> Record, <b>Ctrl+P</b> Pause/Resume, <b>Ctrl+S</b> Stop
+              Kısayollar: <b>Ctrl+R</b> Record, <b>Ctrl+D</b> Pause/Resume, <b>Ctrl+S</b> Stop
             </small>
           </div>
           <div className="spacer" />

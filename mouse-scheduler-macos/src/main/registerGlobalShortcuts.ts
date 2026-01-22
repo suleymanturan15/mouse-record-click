@@ -108,6 +108,7 @@ export function registerGlobalShortcuts(services: AppServices) {
   // On macOS, CommandOrControl maps to Command; we also register Control explicitly.
   globalShortcut.register("CommandOrControl+R", () => void startRecord());
   globalShortcut.register("CommandOrControl+P", () => void togglePause());
+  globalShortcut.register("CommandOrControl+D", () => void togglePause());
   // User asked: Ctrl+S should stop recording AND bring app to front.
   globalShortcut.register("CommandOrControl+S", () => void stopRecord());
 
@@ -116,6 +117,8 @@ export function registerGlobalShortcuts(services: AppServices) {
     globalShortcut.register("Control+P", () => void togglePause());
     // Some keyboards/layouts report this modifier name as Ctrl
     globalShortcut.register("Ctrl+P", () => void togglePause());
+    globalShortcut.register("Control+D", () => void togglePause());
+    globalShortcut.register("Ctrl+D", () => void togglePause());
     globalShortcut.register("Control+S", () => void stopRecord());
   } else {
     // On Windows/Linux Ctrl is already covered by CommandOrControl.
