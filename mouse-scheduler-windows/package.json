@@ -1,7 +1,7 @@
 {
   "name": "mouse-scheduler-windows",
   "private": true,
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "Mouse Recorder & Scheduler (Windows)",
   "main": "dist/main/main/main.js",
   "scripts": {

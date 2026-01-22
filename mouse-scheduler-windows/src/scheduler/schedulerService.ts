@@ -19,6 +19,12 @@ type ChainState = {
   inFlight: boolean;
 };
 
+type IntervalState = {
+  windowKey: string;
+  lastIndex: number;
+  inFlight: boolean;
+};
+
 function dayCodeToNodeScheduleDay(d: DayCode): number {
   // node-schedule: 0=Sunday..6=Saturday
   switch (d) {
@@ -56,6 +62,7 @@ export class SchedulerService {
   private jobs: Map<string, Job[]> = new Map();
   private quotaState: Map<string, QuotaState> = new Map();
   private chainState: Map<string, ChainState> = new Map();
+  private intervalState: Map<string, IntervalState> = new Map();
 
   constructor(storage: Storage, coordinator: RunCoordinator) {
     this.storage = storage;
@@ -68,6 +75,7 @@ export class SchedulerService {
     this.jobs.clear();
     this.quotaState.clear();
     this.chainState.clear();
+    this.intervalState.clear();
 
     const schedules = await this.storage.listSchedules();
     for (const s of schedules) {
@@ -258,8 +266,24 @@ export class SchedulerService {
           const allowed = s.days.some((dc) => dayCodeToNodeScheduleDay(dc) === dow);
           if (!allowed) return;
 
+          const windowKey = `${effectiveDate.toISOString().slice(0, 10)}T${start}`;
+          const st = this.intervalState.get(s.scheduleId) ?? { windowKey, lastIndex: -1, inFlight: false };
+          if (st.windowKey !== windowKey) {
+            st.windowKey = windowKey;
+            st.lastIndex = -1;
+            st.inFlight = false;
+          }
+          this.intervalState.set(s.scheduleId, st);
+
+          if (st.inFlight) return;
+
           const delta = ((curMin - startMin) % (24 * 60) + 24 * 60) % (24 * 60);
-          if (delta % step !== 0) return;
+          const index = Math.floor(delta / step);
+          if (index === st.lastIndex) return;
+
+          st.inFlight = true;
+          st.lastIndex = index;
+          this.intervalState.set(s.scheduleId, st);
 
           const macro = await this.storage.getMacro(s.macroId);
           await this.coordinator.trigger({
@@ -271,6 +295,12 @@ export class SchedulerService {
           });
         } catch {
           // swallow
+        } finally {
+          const st = this.intervalState.get(s.scheduleId);
+          if (st) {
+            st.inFlight = false;
+            this.intervalState.set(s.scheduleId, st);
+          }
         }
       });
       if (job) jobs.push(job);
