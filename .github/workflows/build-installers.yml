@@ -21,11 +21,20 @@ jobs:
           node-version: 20
           
 
+      - name: Setup Python (node-gyp)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
       - name: Install
         run: npm install
+        env:
+          PYTHON: python
 
       - name: Build DMG
         run: npm run pack
+        env:
+          PYTHON: python
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -48,11 +57,20 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Setup Python (node-gyp)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
       - name: Install
         run: npm install
+        env:
+          PYTHON: python
 
       - name: Build EXE (NSIS)
         run: npm run pack
+        env:
+          PYTHON: python
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
