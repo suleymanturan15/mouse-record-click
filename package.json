@@ -1,0 +1,21 @@
+{
+  "name": "mouse-record-click",
+  "version": "1.0.0",
+  "description": "Bu workspace iki ayrı Electron uygulaması içerir:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/suleymanturan15/mouse-record-click-yeni.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/suleymanturan15/mouse-record-click-yeni/issues"
+  },
+  "homepage": "https://github.com/suleymanturan15/mouse-record-click-yeni#readme"
+}
