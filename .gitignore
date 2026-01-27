@@ -12,6 +12,7 @@ dist/
 release/
 out/
 .vite/
+.tmp/
 
 # Electron
 *.blockmap
@@ -22,4 +23,11 @@ out/
 # Env
 .env
 .env.*
+
+# Android / Gradle
+**/local.properties
+**/.gradle/
+**/build/
+**/.idea/
+**/*.iml
 
