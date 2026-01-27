@@ -12,10 +12,14 @@ fi
 
 WRAPPER_JAR="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
 WRAPPER_SHARED_JAR="$APP_HOME/gradle/wrapper/gradle-wrapper-shared.jar"
+GRADLE_CLI_JAR="$APP_HOME/gradle/wrapper/gradle-cli.jar"
 
 CLASSPATH="$WRAPPER_JAR"
 if [ -f "$WRAPPER_SHARED_JAR" ]; then
   CLASSPATH="$CLASSPATH:$WRAPPER_SHARED_JAR"
+fi
+if [ -f "$GRADLE_CLI_JAR" ]; then
+  CLASSPATH="$CLASSPATH:$GRADLE_CLI_JAR"
 fi
 
 exec "$JAVA_CMD" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
